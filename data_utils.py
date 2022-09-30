@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 import torch.distributions as distributions
 import torch.utils.data as data
+import torchvision
 
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
@@ -36,9 +37,18 @@ def load(dataset):
         transform = transforms.Compose(
             [transforms.RandomHorizontalFlip(p=0.5), 
              transforms.ToTensor()])
-        train_set = datasets.CIFAR10('../../data/CIFAR10', 
+        train_set = datasets.CIFAR10('./data/CIFAR10',
             train=True, download=True, transform=transform)
         [train_split, val_split] = data.random_split(train_set, [46000, 4000])
+
+
+    elif dataset == 'mnist':
+        data_info = DataInfo(dataset, 1, 28)
+        transform = torchvision.transforms.ToTensor()
+        train_set = torchvision.datasets.MNIST(root='~/torch/data/MNIST',
+                                      train=True, download=True, transform=transform)
+        [train_split, val_split] = data.random_split(train_set, [50000, 10000])
+
 
     elif dataset == 'celeba':   # 3 x 218 x 178
         data_info = DataInfo(dataset, 3, 64)

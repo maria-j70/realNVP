@@ -34,7 +34,7 @@ class Hyperparameters():
         self.affine = affine
 
 def main(args):
-    device = torch.device("cuda:0")
+
 
     # model hyperparameters
     dataset = args.dataset
@@ -73,8 +73,8 @@ def main(args):
         batch_size=batch_size, shuffle=False, num_workers=2)
 
     prior = distributions.Normal(   # isotropic standard normal distribution
-        torch.tensor(0.).to(device), torch.tensor(1.).to(device))
-    flow = realnvp.RealNVP(datainfo=data_info, prior=prior, hps=hps).to(device)
+        torch.tensor(0.), torch.tensor(1.))
+    flow = realnvp.RealNVP(datainfo=data_info, prior=prior, hps=hps)
     optimizer = optim.Adamax(flow.parameters(), lr=lr, betas=(momentum, decay), eps=1e-7)
     
     epoch = 0
@@ -94,8 +94,8 @@ def main(args):
             x, _ = data
             # log-determinant of Jacobian from the logit transform
             x, log_det = data_utils.logit_transform(x)
-            x = x.to(device)
-            log_det = log_det.to(device)
+            x = x
+            log_det = log_det
 
             # log-likelihood of input minibatch
             log_ll, weight_scale = flow(x)
@@ -131,8 +131,8 @@ def main(args):
             for batch_idx, data in enumerate(val_loader, 1):
                 x, _ = data
                 x, log_det = data_utils.logit_transform(x)
-                x = x.to(device)
-                log_det = log_det.to(device)
+                x = x
+                log_det = log_det
 
                 # log-likelihood of input minibatch
                 log_ll, weight_scale = flow(x)
